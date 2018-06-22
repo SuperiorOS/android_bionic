@@ -54,8 +54,16 @@
    aligned.  After the main loop, process the last 8 bytes using unaligned
    accesses.  */
 
-.p2align 6
+/* Small inputs of less than 8 bytes are handled separately.  This allows the
+   main code to be speed up using unaligned loads since there are now at least
+   8 bytes to be compared.  If the first 8 bytes are equal, align src1.
+   This ensures each iteration does at most one unaligned access even if both
+   src1 and src2 are unaligned, and mutually aligned inputs behave as if
+   aligned.  After the main loop, process the last 16 bytes using unaligned
+   accesses.  */
+
 ENTRY(memcmp)
+.p2align 6
 	subs	limit, limit, 8
 	b.lo	.Lless8
 
@@ -126,4 +134,5 @@ ENTRY(memcmp)
 	b.eq	.Lbyte_loop
 	sub	result, data1w, data2w
 	ret
+
 END(memcmp)
