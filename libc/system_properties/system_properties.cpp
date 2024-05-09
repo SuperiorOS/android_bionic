@@ -304,15 +304,15 @@ int SystemProperties::Update(prop_info* pi, const char* value, unsigned int len)
   atomic_thread_fence(memory_order_release);
   serial |= 1;
   atomic_store_explicit(&pi->serial, serial, memory_order_relaxed);
-  strlcpy(pi->value, value, len + 1);
+  strncpy(pi->value, value, PROP_VALUE_MAX);
   if (have_override) {
     atomic_store_explicit(&override_pi->serial, serial, memory_order_relaxed);
-    strlcpy(override_pi->value, value, len + 1);
+    strncpy(override_pi->value, value, PROP_VALUE_MAX);
   }
   // Now the primary value property area is up-to-date. Let readers know that they should
   // look at the property value instead of the backup area.
   atomic_thread_fence(memory_order_release);
-  int new_serial = (len << 24) | ((serial + 1) & 0xffffff);
+  int new_serial = (len << 24) | ((is_read_only(pi->name) ? 0u : (serial + 1)) & 0xffffff);
   atomic_store_explicit(&pi->serial, new_serial, memory_order_relaxed);
   if (have_override) {
     atomic_store_explicit(&override_pi->serial, new_serial, memory_order_relaxed);
