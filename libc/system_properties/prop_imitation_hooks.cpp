@@ -11,9 +11,6 @@
 
 #define GMS_UNSTABLE "com.google.android.gms.unstable"
 
-#define PROP_SECURITY_PATCH "ro.build.version.security_patch"
-#define PROP_PIH_SECURITY_PATCH "persist.sys.pihooks.security_patch"
-
 #define PROP_FIRST_API_LEVEL "ro.product.first_api_level"
 #define PROP_PIH_FIRST_API_LEVEL "persist.sys.pihooks.first_api_level"
 
@@ -22,9 +19,7 @@ void PropImitationHooks::OnFind(const char** name) {
     return;
   }
   PIH_LOG("name is %s", *name);
-  if (strcmp(*name, PROP_SECURITY_PATCH) == 0) {
-    *name = PROP_PIH_SECURITY_PATCH;
-  } else if (strcmp(*name, PROP_FIRST_API_LEVEL) == 0) {
+  if (strcmp(*name, PROP_FIRST_API_LEVEL) == 0) {
     *name = PROP_PIH_FIRST_API_LEVEL;
   } else {
     return;
